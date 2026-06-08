@@ -55,12 +55,12 @@ PAGE = """<!doctype html>
   .wrap{max-width:820px;margin:24px auto;background:#fff;border:1px solid #9bbad6;
         border-radius:6px;display:flex;overflow:hidden;box-shadow:0 2px 8px #0002}
   .miniroom{width:240px;background:#eaf3fb;border-right:1px solid #cdddee;padding:18px;text-align:center}
-  .avatar{width:140px;height:160px;margin:8px auto;display:flex;align-items:center;
-          justify-content:center;background:linear-gradient(#eafaff,#dbeeff);
-          border:1px solid #9cf;border-radius:14px}
-  .avatar svg{animation:bob 2.4s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-  .mininame{font-size:12px;color:#88600f;font-weight:bold;margin:2px 0 6px}
+  .room{width:200px;height:190px;margin:8px auto;border-radius:10px;overflow:hidden;
+        box-shadow:inset 0 0 0 3px #fff,0 1px 5px #0002;border:1px solid #c9a}
+  .room svg{display:block}
+  .mini{animation:bob 2.6s ease-in-out infinite;transform-origin:center}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .mininame{font-size:12px;color:#88600f;font-weight:bold;margin:4px 0 6px}
   .mood{font-size:13px;color:#577}
   .home{flex:1;padding:18px 22px}
   h1{font-size:18px;margin:0 0 6px;color:#15406b}
@@ -79,25 +79,66 @@ PAGE = """<!doctype html>
 </style></head>
 <body><div class="wrap">
   <aside class="miniroom">
-    <div class="avatar">
-      <svg width="110" height="130" viewBox="0 0 110 130" aria-label="미니미 도토리">
-        <ellipse cx="55" cy="118" rx="30" ry="7" fill="#000" opacity="0.08"/>
-        <rect x="50" y="14" width="10" height="16" rx="5" fill="#7a5230"/>
-        <path d="M22 56 Q55 18 88 56 Q55 70 22 56 Z" fill="#9c6b3f"/>
-        <path d="M22 56 Q55 70 88 56 Q72 64 55 64 Q38 64 22 56 Z" fill="#84592f"/>
-        <ellipse cx="55" cy="86" rx="34" ry="36" fill="#edcb95"/>
-        <ellipse cx="55" cy="86" rx="34" ry="36" fill="none" stroke="#d8b277" stroke-width="2"/>
-        <circle cx="43" cy="84" r="4.6" fill="#3a2a1a"/>
-        <circle cx="67" cy="84" r="4.6" fill="#3a2a1a"/>
-        <circle cx="44.6" cy="82.4" r="1.5" fill="#fff"/>
-        <circle cx="68.6" cy="82.4" r="1.5" fill="#fff"/>
-        <circle cx="36" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
-        <circle cx="74" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
-        <path d="M48 96 Q55 103 62 96" stroke="#3a2a1a" stroke-width="2.4"
-              fill="none" stroke-linecap="round"/>
+    <div class="room">
+      <svg width="200" height="190" viewBox="0 0 200 190" aria-label="도토리네 미니룸">
+        <!-- 벽지 / 바닥 -->
+        <rect x="0" y="0" width="200" height="124" fill="#fdeede"/>
+        <rect x="0" y="124" width="200" height="66" fill="#e6c590"/>
+        <line x1="0" y1="124" x2="200" y2="124" stroke="#d3ad73" stroke-width="2"/>
+        <line x1="0" y1="150" x2="200" y2="150" stroke="#d9b67e" stroke-width="1.4"/>
+        <line x1="0" y1="173" x2="200" y2="173" stroke="#d9b67e" stroke-width="1.4"/>
+        <!-- 창문 -->
+        <rect x="24" y="18" width="58" height="48" rx="4" fill="#bfe6ff" stroke="#fff" stroke-width="4"/>
+        <line x1="53" y1="18" x2="53" y2="66" stroke="#fff" stroke-width="3"/>
+        <line x1="24" y1="42" x2="82" y2="42" stroke="#fff" stroke-width="3"/>
+        <circle cx="42" cy="32" r="6" fill="#fff" opacity="0.9"/>
+        <circle cx="50" cy="32" r="5" fill="#fff" opacity="0.9"/>
+        <!-- 벽시계 -->
+        <circle cx="110" cy="32" r="11" fill="#fff" stroke="#cbb" stroke-width="2"/>
+        <line x1="110" y1="32" x2="110" y2="25" stroke="#766" stroke-width="2"/>
+        <line x1="110" y1="32" x2="115" y2="34" stroke="#766" stroke-width="2"/>
+        <!-- 하트 액자 -->
+        <rect x="134" y="22" width="34" height="30" rx="3" fill="#fff" stroke="#caa"/>
+        <path d="M151 31 q-5 -6 -9 0 q-3 5 9 12 q12 -7 9 -12 q-4 -6 -9 0 z" fill="#f48aa0"/>
+        <!-- 러그 -->
+        <ellipse cx="100" cy="160" rx="64" ry="18" fill="#f7c9d6"/>
+        <ellipse cx="100" cy="160" rx="50" ry="13" fill="#fcdfe8"/>
+        <!-- 소파 -->
+        <rect x="6" y="118" width="46" height="28" rx="9" fill="#9fc4e8"/>
+        <rect x="6" y="110" width="46" height="16" rx="8" fill="#b6d4f0"/>
+        <!-- 화분 -->
+        <rect x="168" y="126" width="22" height="22" rx="3" fill="#c98a5a"/>
+        <path d="M179 126 q-12 -20 -2 -32 q6 12 2 32 z" fill="#5bb56a"/>
+        <path d="M179 126 q12 -18 4 -30 q-2 14 -4 30 z" fill="#6cc97b"/>
+        <path d="M179 126 q-2 -24 0 -32 q4 16 0 32 z" fill="#52a860"/>
+        <!-- 미니미 발 그림자 -->
+        <ellipse cx="100" cy="164" rx="24" ry="5.5" fill="#000" opacity="0.10"/>
+        <!-- 말풍선 -->
+        <g>
+          <rect x="104" y="60" width="78" height="26" rx="13" fill="#fff" stroke="#d9c4a0"/>
+          <path d="M120 86 l-7 11 l15 -7 z" fill="#fff" stroke="#d9c4a0"/>
+          <path d="M120 86 l-7 11 l15 -7" fill="#fff" stroke="#fff"/>
+          <text x="143" y="77" font-size="12" text-anchor="middle" fill="#86631a">방가방가~ 🌰</text>
+        </g>
+        <!-- 미니미(도토리) -->
+        <g transform="translate(56,62) scale(0.78)"><g class="mini">
+          <rect x="50" y="14" width="10" height="16" rx="5" fill="#7a5230"/>
+          <path d="M22 56 Q55 18 88 56 Q55 70 22 56 Z" fill="#9c6b3f"/>
+          <path d="M22 56 Q55 70 88 56 Q72 64 55 64 Q38 64 22 56 Z" fill="#84592f"/>
+          <ellipse cx="55" cy="86" rx="34" ry="36" fill="#edcb95"/>
+          <ellipse cx="55" cy="86" rx="34" ry="36" fill="none" stroke="#d8b277" stroke-width="2"/>
+          <circle cx="43" cy="84" r="4.6" fill="#3a2a1a"/>
+          <circle cx="67" cy="84" r="4.6" fill="#3a2a1a"/>
+          <circle cx="44.6" cy="82.4" r="1.5" fill="#fff"/>
+          <circle cx="68.6" cy="82.4" r="1.5" fill="#fff"/>
+          <circle cx="36" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
+          <circle cx="74" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
+          <path d="M48 96 Q55 103 62 96" stroke="#3a2a1a" stroke-width="2.4"
+                fill="none" stroke-linecap="round"/>
+        </g></g>
       </svg>
     </div>
-    <p class="mininame">미니미</p>
+    <p class="mininame">미니미 — 도토리네 방</p>
     <p class="mood">오늘의 기분: 🌧️</p>
     <p class="bgm">♪ BGM: 첫눈</p>
   </aside>
