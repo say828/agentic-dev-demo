@@ -32,6 +32,22 @@ def room_of(owner):
     bgm = next((BGMS[i] for i in owned if i in BGMS), DEFAULT_BGM)
     return {"wallpaper": wall, "bgm": bgm, "owned": owned}
 
+
+# 기분: 창문 날씨 + 미니미 표정으로 반영.
+MOODS = {
+    "맑음": {"emoji": "☀️", "sky": "#bfe6ff", "weather": "sun", "face": "smile"},
+    "흐림": {"emoji": "☁️", "sky": "#d7dee6", "weather": "cloud", "face": "neutral"},
+    "비": {"emoji": "🌧️", "sky": "#9fb4c8", "weather": "rain", "face": "sad"},
+    "행복": {"emoji": "😊", "sky": "#cdefff", "weather": "sun", "face": "smile"},
+}
+DEFAULT_MOOD = "비"
+mood_state = {"mood": DEFAULT_MOOD}  # 단일 인메모리
+
+
+def mood_of():
+    name = mood_state["mood"]
+    return {"name": name, **MOODS[name]}
+
 # 데모 단일 인스턴스(인메모리). 초기 시드로 화면이 비지 않게 한다.
 dotori = DotoriService()
 ilchon = IlchonService()
@@ -57,6 +73,7 @@ def state(owner=OWNER, viewer=OWNER, day=DAY):
         "ilchons": ilchon.ilchons(owner),
         "guestbook": guestbook.entries(owner, viewer=viewer),
         "room": room_of(owner),
+        "mood": mood_of(),
     }
 
 
@@ -101,12 +118,11 @@ PAGE = """<!doctype html>
         <line x1="0" y1="124" x2="200" y2="124" stroke="#d3ad73" stroke-width="2"/>
         <line x1="0" y1="150" x2="200" y2="150" stroke="#d9b67e" stroke-width="1.4"/>
         <line x1="0" y1="173" x2="200" y2="173" stroke="#d9b67e" stroke-width="1.4"/>
-        <!-- 창문 -->
-        <rect x="24" y="18" width="58" height="48" rx="4" fill="#bfe6ff" stroke="#fff" stroke-width="4"/>
+        <!-- 창문 (하늘색·날씨는 기분으로 바뀜: id=sky, id=weather) -->
+        <rect id="sky" x="24" y="18" width="58" height="48" rx="4" fill="#9fb4c8" stroke="#fff" stroke-width="4"/>
+        <g id="weather"></g>
         <line x1="53" y1="18" x2="53" y2="66" stroke="#fff" stroke-width="3"/>
         <line x1="24" y1="42" x2="82" y2="42" stroke="#fff" stroke-width="3"/>
-        <circle cx="42" cy="32" r="6" fill="#fff" opacity="0.9"/>
-        <circle cx="50" cy="32" r="5" fill="#fff" opacity="0.9"/>
         <!-- 벽시계 -->
         <circle cx="110" cy="32" r="11" fill="#fff" stroke="#cbb" stroke-width="2"/>
         <line x1="110" y1="32" x2="110" y2="25" stroke="#766" stroke-width="2"/>
@@ -149,13 +165,13 @@ PAGE = """<!doctype html>
           <circle cx="68.6" cy="82.4" r="1.5" fill="#fff"/>
           <circle cx="36" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
           <circle cx="74" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
-          <path d="M48 96 Q55 103 62 96" stroke="#3a2a1a" stroke-width="2.4"
+          <path id="mouth" d="M48 101 Q55 95 62 101" stroke="#3a2a1a" stroke-width="2.4"
                 fill="none" stroke-linecap="round"/>
         </g></g>
       </svg>
     </div>
     <p class="mininame">미니미 — 도토리네 방</p>
-    <p class="mood">오늘의 기분: 🌧️</p>
+    <p class="mood" id="moodtxt">오늘의 기분: 🌧️</p>
     <p class="bgm" id="bgm">♪ BGM: 첫눈</p>
   </aside>
   <section class="home">
@@ -184,6 +200,12 @@ PAGE = """<!doctype html>
       <button onclick="ilacc()">친구B 수락</button>
       <div class="msg" id="imsg"></div></section>
 
+    <section class="card"><h2>🌤️ 오늘의 기분 <small style="font-weight:normal;color:#789">(창문 날씨 + 미니미 표정)</small></h2>
+      <button onclick="setMood('맑음')">☀️ 맑음</button>
+      <button onclick="setMood('흐림')">☁️ 흐림</button>
+      <button onclick="setMood('비')">🌧️ 비</button>
+      <button onclick="setMood('행복')">😊 행복</button></section>
+
     <section class="card"><h2>📖 방명록</h2>
       <input id="gauthor" value="방문자" style="width:70px">
       <input id="gmsg" value="다녀가요~" style="width:140px">
@@ -210,8 +232,27 @@ function friendSVG(name, i){
     + '<circle cx="72" cy="95" r="5" fill="#f6a0b4" opacity="0.7"/>'
     + '<path d="M48 97 Q55 103 62 97" stroke="#3a2a1a" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>';
 }
+const WEATHER = {
+  sun:'<circle cx="66" cy="29" r="7" fill="#ffd34d"/>'
+    +'<g stroke="#ffd34d" stroke-width="2"><line x1="66" y1="17" x2="66" y2="21"/>'
+    +'<line x1="66" y1="37" x2="66" y2="41"/><line x1="54" y1="29" x2="58" y2="29"/>'
+    +'<line x1="74" y1="29" x2="78" y2="29"/></g>',
+  cloud:'<ellipse cx="64" cy="34" rx="13" ry="7" fill="#fff"/><ellipse cx="53" cy="36" rx="8" ry="6" fill="#fff"/>',
+  rain:'<ellipse cx="64" cy="30" rx="13" ry="7" fill="#fff"/><ellipse cx="53" cy="32" rx="8" ry="6" fill="#fff"/>'
+    +'<g stroke="#7fa6c4" stroke-width="2"><line x1="54" y1="42" x2="52" y2="48"/>'
+    +'<line x1="62" y1="42" x2="60" y2="48"/><line x1="70" y1="42" x2="68" y2="48"/></g>'
+};
+const MOUTH = {smile:'M48 96 Q55 103 62 96', neutral:'M48 99 L62 99', sad:'M48 101 Q55 95 62 101'};
+function applyMood(m){
+  document.getElementById('sky').setAttribute('fill', m.sky);
+  document.getElementById('weather').innerHTML = WEATHER[m.weather] || '';
+  document.getElementById('mouth').setAttribute('d', MOUTH[m.face] || MOUTH.neutral);
+  document.getElementById('moodtxt').textContent = '오늘의 기분: ' + m.emoji;
+}
+async function setMood(name){ await api('/api/mood',{mood:name}); refresh(); }
 async function refresh(){
   const s = await (await fetch('/api/state')).json();
+  applyMood(s.mood);
   title.textContent = s.owner + '님의 미니홈피';
   today.textContent = s.today; total.textContent = s.total; bal.textContent = s.balance;
   ilchons.textContent = '일촌(' + s.ilchons.length + '): ' + (s.ilchons.join(', ') || '아직 없음');
@@ -280,6 +321,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, ilchon.accept(b["frm"], b["to"]))
             if u.path == "/api/visit":
                 return self._send(200, today.visit(b["owner"], b["visitor"], b.get("day", DAY)))
+            if u.path == "/api/mood":
+                if b.get("mood") in MOODS:
+                    mood_state["mood"] = b["mood"]
+                return self._send(200, mood_of())
             if u.path == "/api/guestbook":
                 return self._send(200, guestbook.write(
                     b["owner"], b["author"], b["msg"], secret=bool(b.get("secret"))))

@@ -1,6 +1,6 @@
 # 싸이월드 미니홈피 · 검증 (retained): 회귀 4분면
 
-> proof: `python3 proof/run_proof.py` → 26/26 PASS (백엔드 18 + 웹 8, exit 0).
+> proof: `python3 proof/run_proof.py` → 27/27 PASS (백엔드 18 + 웹 9, exit 0).
 
 | 분면 | 검증 대상 | 수용기준 | 결과 |
 | --- | --- | --- | --- |
@@ -12,6 +12,7 @@
 | 집계 | 투데이 멱등(방문자·날짜) | AC-5 | PASS |
 | 화면 | minihompy 스냅샷 일치 | AC-6 | PASS · ui_parity 1/1 |
 | 방꾸미기 | 벽지·BGM 구매가 미니룸 반영 | AC-W5·W6 | PASS |
+| 기분 | 기분 변경이 창문 날씨·미니미 표정 반영 | AC-W7 | PASS |
 | 회귀 | 방명록 최신순·비밀글 무손상 | shared | PASS |
 
 ## Residual Risk

@@ -1,6 +1,6 @@
 # 미니홈피 웹 프론트 · 검증 (retained)
 
-> proof: `python3 proof/run_proof.py` → 26/26 PASS (백엔드 18 + 웹 8).
+> proof: `python3 proof/run_proof.py` → 27/27 PASS (백엔드 18 + 웹 9).
 
 | AC | 검증 | 결과 |
 | --- | --- | --- |
@@ -10,11 +10,17 @@
 | AC-W4 | 일촌 수락 양방향 / 방명록 최신순 / 잘못된 본문 400 | PASS |
 | AC-W5 | 방 꾸미기: 벽지 구매가 `room.wallpaper`·보유에 반영 | PASS |
 | AC-W6 | 방 꾸미기: BGM 구매가 `room.bgm`에 반영 | PASS |
+| AC-W7 | 기분 변경이 `mood`(창문 날씨·미니미 표정)에 반영 | PASS |
 
-## 방 꾸미기 ↔ 도토리 연동 (이번 개선)
+## 방 꾸미기 ↔ 도토리 연동 (개선)
 - 구매 성공 = 보유 지급(AC-7) → `/api/state.room`이 벽지색·BGM·보유목록을 산출.
 - 프론트는 `room.wallpaper`로 벽지 `rect#wall` 채움, `room.bgm`으로 BGM 표시,
   `ilchons`로 친구 미니미(`g#friends`)를 방에 렌더. 멱등 재구매는 중복 미반영.
+
+## 기분 연동 (개선)
+- `POST /api/mood` → `mood_state` 설정, `/api/state.mood`가 {emoji, sky, weather, face} 산출.
+- 프론트는 창문 하늘색(`rect#sky`)·날씨(`g#weather`: sun/cloud/rain)와 미니미 입모양
+  (`path#mouth`: smile/neutral/sad)을 기분에 맞춰 갱신.
 
 ## 검증 방식(정직)
 - 브라우저 비가용 → **in-process 서버를 임시 포트로 띄워 UTF-8 urllib 로 호출**하는

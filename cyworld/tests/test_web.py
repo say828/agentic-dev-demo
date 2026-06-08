@@ -20,6 +20,7 @@ def base_url():
     app.ilchon = app.IlchonService()
     app.today = app.TodayService()
     app.guestbook = app.GuestbookService()
+    app.mood_state = {"mood": app.DEFAULT_MOOD}
     app._seed()
     srv = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
@@ -97,3 +98,10 @@ def test_room_bgm_from_purchase(base_url):
     _post(base_url + "/api/purchase",
           {"user": "도토리", "item": "BGM:벚꽃엔딩", "price": 50, "order_id": "bg1"})
     assert _get(base_url + "/api/state")["room"]["bgm"] == "벚꽃엔딩"
+
+
+def test_mood_change(base_url):
+    assert _get(base_url + "/api/state")["mood"]["name"] == app.DEFAULT_MOOD
+    r = _post(base_url + "/api/mood", {"mood": "맑음"})
+    assert r["name"] == "맑음" and r["weather"] == "sun" and r["face"] == "smile"
+    assert _get(base_url + "/api/state")["mood"]["name"] == "맑음"
