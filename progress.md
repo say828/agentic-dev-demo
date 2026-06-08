@@ -49,8 +49,9 @@
   표정, AC-W7, 테스트 +1) → **proof 27/27**.
 
 ## 배포/PR 상태
-- `gh` 미설치 + say828(upstream) 쓰기권한 없음 → shongdr 포크 경유로 진행.
-- 포크 원격 `fork = github.com/shongdr/agentic-dev-demo` 추가, `cyworld`·`pinterest` 푸시 완료.
-- PR(→ say828:main)은 cross-fork 링크로 사용자가 생성 예정(토큰 추출은 가드레일로 차단).
+- say828(upstream) 쓰기권한 없음 → shongdr 포크 경유. 포크 원격 `fork = github.com/shongdr/agentic-dev-demo`.
+- `gh` 2.93.0 설치(winget) + device-flow 로그인(shongdr, repo scope) 완료.
+- **cyworld PR 생성됨: https://github.com/say828/agentic-dev-demo/pull/1** (base say828:main ← head shongdr:cyworld).
+- **pinterest는 PR 대상 아님**(사용자 지정). 포크에 브랜치는 푸시돼 있으나 PR 미생성.
 - 토큰/비용 실측: 아직 `/cost` 미반영(rate 200k/h 가정 유지).
 - 보정 방법: `/cost` 누적값 X 를 알려주면 rate = X ÷ (총 소요시간)으로 재계산해 표 전체 갱신.
