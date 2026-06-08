@@ -80,3 +80,20 @@ def test_guestbook_post(base_url):
           {"owner": "도토리", "author": "방문자", "msg": "다녀가요", "secret": False})
     authors = [e["author"] for e in _get(base_url + "/api/state")["guestbook"]]
     assert authors[0] == "방문자"  # 최신순 맨 앞
+
+
+def test_room_reflects_purchase(base_url):
+    # 기본 벽지 → 구매 후 '벽지:하늘'이 방에 반영되고 보유에 등록
+    s0 = _get(base_url + "/api/state")["room"]
+    assert s0["wallpaper"] == app.DEFAULT_WALL and "벽지:하늘" not in s0["owned"]
+    _post(base_url + "/api/purchase",
+          {"user": "도토리", "item": "벽지:하늘", "price": 80, "order_id": "wp1"})
+    s1 = _get(base_url + "/api/state")["room"]
+    assert s1["wallpaper"] == app.WALLPAPERS["벽지:하늘"]
+    assert "벽지:하늘" in s1["owned"]
+
+
+def test_room_bgm_from_purchase(base_url):
+    _post(base_url + "/api/purchase",
+          {"user": "도토리", "item": "BGM:벚꽃엔딩", "price": 50, "order_id": "bg1"})
+    assert _get(base_url + "/api/state")["room"]["bgm"] == "벚꽃엔딩"

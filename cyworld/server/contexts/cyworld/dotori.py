@@ -26,6 +26,7 @@ class DotoriService:
     def __init__(self, idem=None):
         self.idem = idem or IdempotencyStore()
         self._balance = {}
+        self._owned = {}  # user -> set(item) 구매로 지급된 보유 아이템
 
     def charge(self, user, amount):
         if amount <= 0:
@@ -45,8 +46,13 @@ class DotoriService:
                 raise InsufficientDotori(
                     f"잔액 부족: balance={bal} < price={price}")
             self._balance[user] = bal - price
+            self._owned.setdefault(user, set()).add(item)  # 구매 = 보유 지급
             return PurchaseResult("purchased", item=item, price=price,
                                   balance=self._balance[user], order_id=key)
 
         res, replay = self.idem.issue_once(key, _do)
         return replace(res, replay=replay)
+
+    def owned(self, user):
+        """보유 아이템 목록(정렬). 멱등 재구매는 중복 지급되지 않는다."""
+        return sorted(self._owned.get(user, set()))

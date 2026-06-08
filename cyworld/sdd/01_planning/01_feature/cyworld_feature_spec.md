@@ -18,6 +18,9 @@
 
 **AC-6(화면)** The minihompy 메인 화면은 shall 승인된 디자인 스냅샷과 일치한다(UI parity).
 
+**AC-7** When 아이템 구매가 성공하면, the system shall 해당 아이템을 보유에 지급한다.
+멱등 재구매는 중복 지급하지 않는다. (벽지/BGM 보유는 미니룸 벽지·BGM으로 반영된다 — 웹 AC-W5.)
+
 ## 검증 매핑
 
 | AC | 테스트 |
@@ -28,4 +31,5 @@
 | AC-4 | `tests/test_ilchon.py` |
 | AC-5 | `tests/test_today.py` |
 | AC-6 | `tests/test_screen_parity.py` + `99_toolchain/01_automation/run_ui_parity.py` |
+| AC-7 | `tests/test_dotori.py::test_purchase_grants_item`, `::test_idempotent_purchase_single_grant` |
 | 회귀 | `tests/test_regression.py` (방명록) |

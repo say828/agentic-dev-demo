@@ -19,6 +19,19 @@ from server.contexts.cyworld.today import TodayService
 OWNER = "도토리"
 DAY = "2026-06-08"
 
+# 방 꾸미기: 구매 아이템 → 미니룸 시각. 보유분 중 첫 매칭을 적용.
+WALLPAPERS = {"벽지:하늘": "#bfe6ff", "벽지:노을": "#ffd9b0", "벽지:벚꽃": "#ffe3ee"}
+BGMS = {"BGM:첫눈": "첫눈", "BGM:벚꽃엔딩": "벚꽃엔딩", "BGM:붉은노을": "붉은노을"}
+DEFAULT_WALL = "#fdeede"
+DEFAULT_BGM = "첫눈"
+
+
+def room_of(owner):
+    owned = dotori.owned(owner)
+    wall = next((WALLPAPERS[i] for i in owned if i in WALLPAPERS), DEFAULT_WALL)
+    bgm = next((BGMS[i] for i in owned if i in BGMS), DEFAULT_BGM)
+    return {"wallpaper": wall, "bgm": bgm, "owned": owned}
+
 # 데모 단일 인스턴스(인메모리). 초기 시드로 화면이 비지 않게 한다.
 dotori = DotoriService()
 ilchon = IlchonService()
@@ -43,6 +56,7 @@ def state(owner=OWNER, viewer=OWNER, day=DAY):
         "balance": dotori.balance(owner),
         "ilchons": ilchon.ilchons(owner),
         "guestbook": guestbook.entries(owner, viewer=viewer),
+        "room": room_of(owner),
     }
 
 
@@ -81,8 +95,8 @@ PAGE = """<!doctype html>
   <aside class="miniroom">
     <div class="room">
       <svg width="200" height="190" viewBox="0 0 200 190" aria-label="도토리네 미니룸">
-        <!-- 벽지 / 바닥 -->
-        <rect x="0" y="0" width="200" height="124" fill="#fdeede"/>
+        <!-- 벽지 / 바닥 (벽지는 구매 아이템으로 바뀜: id=wall) -->
+        <rect id="wall" x="0" y="0" width="200" height="124" fill="#fdeede"/>
         <rect x="0" y="124" width="200" height="66" fill="#e6c590"/>
         <line x1="0" y1="124" x2="200" y2="124" stroke="#d3ad73" stroke-width="2"/>
         <line x1="0" y1="150" x2="200" y2="150" stroke="#d9b67e" stroke-width="1.4"/>
@@ -111,6 +125,8 @@ PAGE = """<!doctype html>
         <path d="M179 126 q-12 -20 -2 -32 q6 12 2 32 z" fill="#5bb56a"/>
         <path d="M179 126 q12 -18 4 -30 q-2 14 -4 30 z" fill="#6cc97b"/>
         <path d="M179 126 q-2 -24 0 -32 q4 16 0 32 z" fill="#52a860"/>
+        <!-- 일촌 미니미(수락 시 JS가 채움) -->
+        <g id="friends"></g>
         <!-- 미니미 발 그림자 -->
         <ellipse cx="100" cy="164" rx="24" ry="5.5" fill="#000" opacity="0.10"/>
         <!-- 말풍선 -->
@@ -140,7 +156,7 @@ PAGE = """<!doctype html>
     </div>
     <p class="mininame">미니미 — 도토리네 방</p>
     <p class="mood">오늘의 기분: 🌧️</p>
-    <p class="bgm">♪ BGM: 첫눈</p>
+    <p class="bgm" id="bgm">♪ BGM: 첫눈</p>
   </aside>
   <section class="home">
     <h1 id="title"></h1>
@@ -154,7 +170,15 @@ PAGE = """<!doctype html>
       <input id="price" type="number" value="120" style="width:60px"><button onclick="buy()">구매</button>
       <div class="msg" id="dmsg"></div></section>
 
-    <section class="card"><h2>👫 일촌</h2>
+    <section class="card"><h2>🎀 방 꾸미기 상점 <small style="font-weight:normal;color:#789">(사면 방이 바뀜)</small></h2>
+      <button onclick="shop('벽지:하늘',80)">벽지:하늘 (80)</button>
+      <button onclick="shop('벽지:노을',80)">벽지:노을 (80)</button>
+      <button onclick="shop('벽지:벚꽃',80)">벽지:벚꽃 (80)</button>
+      <button onclick="shop('BGM:벚꽃엔딩',50)">BGM:벚꽃엔딩 (50)</button>
+      <div class="msg" id="smsg"></div>
+      <div style="font-size:12px;color:#577">보유: <span id="owned">-</span></div></section>
+
+    <section class="card"><h2>👫 일촌 <small style="font-weight:normal;color:#789">(수락하면 방에 친구 등장)</small></h2>
       <span id="ilchons"></span><br>
       <input id="who" value="친구C" style="width:80px"><button onclick="ilreq()">신청</button>
       <button onclick="ilacc()">친구B 수락</button>
@@ -174,6 +198,18 @@ async function api(path, body){
     body: JSON.stringify(body)});
   return r.json();
 }
+function friendSVG(name, i){
+  const caps = ['#b46b8f','#6f9bd1','#cda14a','#7bbf8a'];
+  const x = 116 + i*24, y = 122, cap = caps[i % caps.length];
+  return '<g transform="translate('+x+','+y+') scale(0.40)"><title>'+name+'</title>'
+    + '<ellipse cx="55" cy="124" rx="30" ry="7" fill="#000" opacity="0.10"/>'
+    + '<path d="M22 56 Q55 18 88 56 Q55 70 22 56 Z" fill="'+cap+'"/>'
+    + '<ellipse cx="55" cy="86" rx="34" ry="36" fill="#edcb95" stroke="#d8b277" stroke-width="2"/>'
+    + '<circle cx="45" cy="86" r="4" fill="#3a2a1a"/><circle cx="65" cy="86" r="4" fill="#3a2a1a"/>'
+    + '<circle cx="38" cy="95" r="5" fill="#f6a0b4" opacity="0.7"/>'
+    + '<circle cx="72" cy="95" r="5" fill="#f6a0b4" opacity="0.7"/>'
+    + '<path d="M48 97 Q55 103 62 97" stroke="#3a2a1a" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>';
+}
 async function refresh(){
   const s = await (await fetch('/api/state')).json();
   title.textContent = s.owner + '님의 미니홈피';
@@ -181,6 +217,16 @@ async function refresh(){
   ilchons.textContent = '일촌(' + s.ilchons.length + '): ' + (s.ilchons.join(', ') || '아직 없음');
   gb.innerHTML = s.guestbook.map(e =>
     '<li'+(e.secret?' class="secret"':'')+'><b>'+e.author+'</b>: '+e.msg+(e.secret?' 🔒':'')+'</li>').join('');
+  // 방 꾸미기 반영: 벽지·BGM·보유·일촌 미니미
+  document.getElementById('wall').setAttribute('fill', s.room.wallpaper);
+  document.getElementById('bgm').textContent = '♪ BGM: ' + s.room.bgm;
+  document.getElementById('owned').textContent = s.room.owned.join(', ') || '없음';
+  document.getElementById('friends').innerHTML = s.ilchons.slice(0,4).map(friendSVG).join('');
+}
+async function shop(item, price){
+  const r = await api('/api/purchase',{user:'도토리',item:item,price:price});
+  smsg.textContent = r.error ? ('구매 실패: '+r.error) : (item+' 적용! 잔액 '+r.balance);
+  refresh();
 }
 async function charge(){ await api('/api/charge',{user:'도토리',amount:+amt.value}); dmsg.textContent=''; refresh(); }
 async function buy(){ const r=await api('/api/purchase',{user:'도토리',item:item.value,price:+price.value});

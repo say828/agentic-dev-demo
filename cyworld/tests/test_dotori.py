@@ -36,3 +36,17 @@ def test_purchase_idempotent(dotori):
     r2 = dotori.purchase("a", "폰트", 70, order_id="ord-1")  # 같은 주문 재요청
     assert r1.replay is False and r2.replay is True
     assert dotori.balance("a") == 130  # 한 번만 차감
+
+
+def test_purchase_grants_item(dotori):
+    dotori.charge("a", 300)
+    dotori.purchase("a", "벽지:하늘", 80, order_id="o1")
+    dotori.purchase("a", "BGM:벚꽃엔딩", 50, order_id="o2")
+    assert dotori.owned("a") == ["BGM:벚꽃엔딩", "벽지:하늘"]  # 정렬 보유
+
+
+def test_idempotent_purchase_single_grant(dotori):
+    dotori.charge("a", 300)
+    dotori.purchase("a", "벽지:하늘", 80, order_id="o1")
+    dotori.purchase("a", "벽지:하늘", 80, order_id="o1")  # 멱등 재구매
+    assert dotori.owned("a") == ["벽지:하늘"]  # 중복 지급 없음

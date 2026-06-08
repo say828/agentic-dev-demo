@@ -8,7 +8,7 @@
 ```bash
 pip install -r requirements.txt
 python3 -m compileall -q server                              # build
-python3 proof/run_proof.py                                   # proof → 22/22 PASS (백엔드16+웹6)
+python3 proof/run_proof.py                                   # proof → 26/26 PASS (백엔드18+웹8)
 python3 sdd/99_toolchain/01_automation/run_ui_parity.py      # verify_dev (UI parity 1/1)
 python3 -m server.web.app                                    # 웹 프론트 → http://localhost:8000
 ```
