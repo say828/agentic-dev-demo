@@ -8,9 +8,14 @@
 ```bash
 pip install -r requirements.txt
 python3 -m compileall -q server                              # build
-python3 proof/run_proof.py                                   # proof → 16/16 PASS
+python3 proof/run_proof.py                                   # proof → 22/22 PASS (백엔드16+웹6)
 python3 sdd/99_toolchain/01_automation/run_ui_parity.py      # verify_dev (UI parity 1/1)
+python3 -m server.web.app                                    # 웹 프론트 → http://localhost:8000
 ```
+
+> 웹 프론트는 의존성 0(파이썬 표준 `http.server`)으로 미니홈피 페이지 + JSON API를
+> 제공한다. 브라우저 비가용 환경이라 HTTP 계약은 `tests/test_web.py`(in-process 서버)로
+> 결정적 검증하고, 시각 확인은 사용자가 `localhost`에서 한다.
 
 ## 무엇을 클론했나 (auth·finance·pinterest 패턴 종합)
 | 백엔드 핵심 | 모듈 | 결 | AC |
