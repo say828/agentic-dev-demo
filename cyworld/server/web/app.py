@@ -55,8 +55,12 @@ PAGE = """<!doctype html>
   .wrap{max-width:820px;margin:24px auto;background:#fff;border:1px solid #9bbad6;
         border-radius:6px;display:flex;overflow:hidden;box-shadow:0 2px 8px #0002}
   .miniroom{width:240px;background:#eaf3fb;border-right:1px solid #cdddee;padding:18px;text-align:center}
-  .avatar{width:120px;height:140px;margin:8px auto;background:#dff;border:1px solid #9cf;
-          border-radius:8px;line-height:140px;color:#69c}
+  .avatar{width:140px;height:160px;margin:8px auto;display:flex;align-items:center;
+          justify-content:center;background:linear-gradient(#eafaff,#dbeeff);
+          border:1px solid #9cf;border-radius:14px}
+  .avatar svg{animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .mininame{font-size:12px;color:#88600f;font-weight:bold;margin:2px 0 6px}
   .mood{font-size:13px;color:#577}
   .home{flex:1;padding:18px 22px}
   h1{font-size:18px;margin:0 0 6px;color:#15406b}
@@ -75,7 +79,25 @@ PAGE = """<!doctype html>
 </style></head>
 <body><div class="wrap">
   <aside class="miniroom">
-    <div class="avatar">미니미</div>
+    <div class="avatar">
+      <svg width="110" height="130" viewBox="0 0 110 130" aria-label="미니미 도토리">
+        <ellipse cx="55" cy="118" rx="30" ry="7" fill="#000" opacity="0.08"/>
+        <rect x="50" y="14" width="10" height="16" rx="5" fill="#7a5230"/>
+        <path d="M22 56 Q55 18 88 56 Q55 70 22 56 Z" fill="#9c6b3f"/>
+        <path d="M22 56 Q55 70 88 56 Q72 64 55 64 Q38 64 22 56 Z" fill="#84592f"/>
+        <ellipse cx="55" cy="86" rx="34" ry="36" fill="#edcb95"/>
+        <ellipse cx="55" cy="86" rx="34" ry="36" fill="none" stroke="#d8b277" stroke-width="2"/>
+        <circle cx="43" cy="84" r="4.6" fill="#3a2a1a"/>
+        <circle cx="67" cy="84" r="4.6" fill="#3a2a1a"/>
+        <circle cx="44.6" cy="82.4" r="1.5" fill="#fff"/>
+        <circle cx="68.6" cy="82.4" r="1.5" fill="#fff"/>
+        <circle cx="36" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
+        <circle cx="74" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
+        <path d="M48 96 Q55 103 62 96" stroke="#3a2a1a" stroke-width="2.4"
+              fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="mininame">미니미</p>
     <p class="mood">오늘의 기분: 🌧️</p>
     <p class="bgm">♪ BGM: 첫눈</p>
   </aside>
