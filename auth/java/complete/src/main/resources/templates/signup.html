@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>회원가입 OTP 데모 · SDD</title>
+    <style>
+        :root {
+            --violet: #6700e6;
+            --violet-weak: #f2ecff;
+            --ink: #16151a;
+            --muted: #6b6b76;
+            --line: #e6e4ee;
+            --ok: #128a4b;
+            --bad: #c0392b;
+            --bg: #f6f5fa;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.55;
+        }
+        .wrap { max-width: 1040px; margin: 0 auto; padding: 40px 20px 64px; }
+        header.page { margin-bottom: 28px; }
+        header.page h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: -0.02em; }
+        header.page p { margin: 0; color: var(--muted); }
+        .chain {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+            font-size: 12.5px;
+        }
+        .chain span {
+            background: #fff; border: 1px solid var(--line); border-radius: 999px;
+            padding: 4px 11px; color: var(--muted);
+        }
+        .chain span.here { background: var(--violet); border-color: var(--violet); color: #fff; font-weight: 600; }
+        .grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+        .card {
+            background: #fff; border: 1px solid var(--line); border-radius: 16px;
+            padding: 26px; box-shadow: 0 1px 2px rgba(20,21,26,.04);
+        }
+        .card h2 { font-size: 14px; text-transform: none; margin: 0 0 4px; color: var(--violet); font-weight: 700; }
+        .card .sub { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+        .steps { display: flex; gap: 6px; margin-bottom: 22px; font-size: 12px; color: var(--muted); }
+        .steps b { color: var(--ink); }
+        .steps .on { color: var(--violet); font-weight: 700; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+        input[type=email], input[name=otp] {
+            width: 100%; padding: 13px 14px; border: 1.5px solid var(--line);
+            border-radius: 10px; font-size: 16px; outline: none;
+        }
+        input[type=email]:focus, input[name=otp]:focus { border-color: var(--violet); }
+        input[name=otp] { letter-spacing: 8px; text-align: center; font-weight: 700; }
+        button[type=submit] {
+            margin-top: 16px; width: 100%; padding: 13px; border: 0; border-radius: 10px;
+            background: var(--violet); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
+        }
+        button[type=submit]:hover { background: #5600c2; }
+        .signup h1 { font-size: 20px; margin: 0 0 6px; }
+        .signup p { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+        .hint {
+            margin-top: 16px; background: var(--violet-weak); border-radius: 10px; padding: 12px 14px;
+            font-size: 13px; color: #4a2fa6;
+        }
+        .hint code { font-size: 15px; font-weight: 700; letter-spacing: 2px; }
+        .result { text-align: center; padding: 8px 0; }
+        .result .badge {
+            display: inline-block; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 13px;
+        }
+        .result .badge.ok { background: #e7f6ee; color: var(--ok); }
+        .result .badge.bad { background: #fdecea; color: var(--bad); }
+        .result h3 { margin: 16px 0 6px; font-size: 18px; }
+        .kv { text-align: left; margin: 18px auto 0; max-width: 340px; font-size: 13px; }
+        .kv div { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+        .kv div span:first-child { color: var(--muted); }
+        .kv code { font-size: 12px; }
+        a.reset { display: inline-block; margin-top: 20px; color: var(--violet); font-weight: 600; text-decoration: none; font-size: 14px; }
+        .err { color: var(--bad); font-size: 13px; margin-top: 8px; }
+
+        /* 우측: 플래닝 산출물 패널 */
+        .why h2 { color: var(--ink); }
+        .why .lead { font-size: 13px; color: var(--muted); margin: 0 0 18px; }
+        .ac { border-top: 1px solid var(--line); }
+        .ac .row { display: grid; grid-template-columns: 44px 1fr; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+        .ac .tag { font-weight: 700; color: var(--violet); }
+        .ac .row.live .tag::after { content: " ●"; color: var(--ok); font-size: 10px; }
+        .files { margin-top: 20px; }
+        .files .t { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+        .files ol { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--ink); }
+        .files ol li { margin-bottom: 5px; }
+        .files code { font-size: 12px; background: #f3f2f8; padding: 1px 5px; border-radius: 4px; }
+        footer { margin-top: 28px; text-align: center; color: var(--muted); font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header class="page">
+        <h1>회원가입 OTP 데모</h1>
+        <p>기획 문서(md)로 계획한 기능이 <b>실제로 동작하는 화면</b>이 되는 지점입니다.</p>
+        <div class="chain">
+            <span>요구사항 원문</span>
+            <span>01_planning · EARS</span>
+            <span>02_plan · todos</span>
+            <span>03_build</span>
+            <span>04_verify</span>
+            <span class="here">이 화면</span>
+        </div>
+    </header>
+
+    <div class="grid">
+        <!-- 좌측: 실제 동작하는 OTP 흐름 -->
+        <section class="card">
+            <h2>동작 화면</h2>
+            <p class="sub">발급 → 인증번호 입력 → 가입까지 브라우저에서 직접 실행됩니다.</p>
+            <div class="steps">
+                <span th:classappend="${step == 'email'} ? 'on'"><b>1</b> 이메일</span> ›
+                <span th:classappend="${step == 'otp'} ? 'on'"><b>2</b> 인증번호</span> ›
+                <span th:classappend="${step == 'result'} ? 'on'"><b>3</b> 결과</span>
+            </div>
+
+            <!-- 1단계: 이메일 -->
+            <form th:if="${step == 'email'}" method="post" action="/issue">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="a@x.com" required/>
+                <p class="err" th:if="${error}" th:text="${error}"></p>
+                <button type="submit">인증번호 받기</button>
+            </form>
+
+            <!-- 2단계: 인증번호 입력 (캐노니컬 스냅샷) -->
+            <form th:if="${step == 'otp'}" method="post" action="/verify">
+                <input type="hidden" name="email" th:value="${email}"/>
+                <main class="signup">
+                    <h1>인증번호 입력</h1>
+                    <p>이메일로 받은 6자리 인증번호를 입력하세요.</p>
+                    <input name="otp" inputmode="numeric" maxlength="6" autofocus/>
+                    <button type="submit">확인</button>
+                </main>
+                <div class="hint">
+                    데모 안내: 실제 서비스는 이메일로 전송합니다. 여기서는 발급된 코드를 바로 보여줍니다 →
+                    <code th:text="${issuedCode}">000000</code>
+                </div>
+            </form>
+
+            <!-- 3단계: 결과 -->
+            <div th:if="${step == 'result'}" class="result">
+                <span th:if="${result.status == 'created'}" class="badge ok">가입 완료</span>
+                <span th:unless="${result.status == 'created'}" class="badge bad">가입 거부</span>
+                <h3 th:text="${reasonText}">결과 메시지</h3>
+                <div class="kv">
+                    <div><span>이메일</span><code th:text="${email}"></code></div>
+                    <div><span>상태</span><code th:text="${result.status}"></code></div>
+                    <div><span>사유</span><code th:text="${result.reason}"></code></div>
+                    <div th:if="${result.status == 'created'}"><span>멱등 재요청</span><code th:text="${result.replay} ? 'true (중복 차단)' : 'false (신규 생성)'"></code></div>
+                </div>
+                <a class="reset" href="/">↺ 처음부터 다시</a>
+            </div>
+        </section>
+
+        <!-- 우측: 왜 이걸 만드나 · 플래닝 산출물 -->
+        <aside class="card why">
+            <h2>이 화면을 왜 만드나</h2>
+            <p class="lead">
+                왼쪽 화면의 발급·검증·잠금·멱등 동작은 즉흥이 아니라,
+                기획 단계에서 EARS로 못박은 <b>Acceptance Criteria</b>를 그대로 실행한 결과입니다.
+            </p>
+            <div class="ac">
+                <div class="row live"><span class="tag">AC-1</span><span>회원가입 요청 시 (email, purpose)에 6자리 OTP 발급 + TTL 300초</span></div>
+                <div class="row live"><span class="tag">AC-2</span><span>OTP가 유효하고 올바르면 계정 생성</span></div>
+                <div class="row live"><span class="tag">AC-3</span><span>OTP 5회 연속 오답 시 잠금(무차별 대입 방지)</span></div>
+                <div class="row live"><span class="tag">AC-4</span><span>TTL 300초 경과 시 만료로 거부</span></div>
+                <div class="row live"><span class="tag">AC-5</span><span>같은 사용자 재요청은 멱등 보장(중복 계정 방지)</span></div>
+                <div class="row live"><span class="tag">AC-6</span><span>signup_otp 화면이 승인된 디자인 스냅샷과 일치(지금 이 화면)</span></div>
+            </div>
+            <p class="lead" style="margin-top:14px;font-size:12px;">● 표시는 이 데모 화면에서 실제로 실행되는 기준입니다.</p>
+
+            <div class="files">
+                <div class="t">이 화면이 나오기까지의 SDD 산출물</div>
+                <ol>
+                    <li>요구사항 원문 <code>sdd/00_sources/02_requirements/auth-signup.md</code></li>
+                    <li>기획·명세 <code>sdd/01_planning/01_feature/auth_feature_spec.md</code> (AC-1~AC-6)</li>
+                    <li>화면 기획 <code>sdd/01_planning/02_screen/signup_otp_screen.md</code></li>
+                    <li>실행 계획 <code>sdd/02_plan/01_feature/auth_todos.md</code> (T1~T4)</li>
+                    <li>구현 요약 <code>sdd/03_build/02_screen/signup_otp.md</code></li>
+                    <li>검증 <code>sdd/04_verify/02_screen/platform/signup.md</code></li>
+                </ol>
+            </div>
+        </aside>
+    </div>
+
+    <footer>© Elice. All Rights Reserved · Agentic Dev SDD 데모 · auth/java/complete</footer>
+</div>
+</body>
+</html>
