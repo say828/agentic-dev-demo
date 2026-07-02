@@ -85,7 +85,7 @@ solve_stage3() {
 status() {
   local n=0
   for m in "${DOMAIN[@]}"; do
-    n=$((n + $(find "$m/src/main/java" -name '*.java' 2>/dev/null | wc -l | tr -d ' ')))
+    n=$((n + $(find "$m/src/main/java" -name '*.java' 2>/dev/null | wc -l | tr -d ' ' || true)))
   done
   if [ "$n" != "0" ]; then
     echo "[status] 백엔드 코드 구현 있음 (${n}개 .java) → verify 가능"
