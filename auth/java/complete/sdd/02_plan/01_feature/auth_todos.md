@@ -10,7 +10,7 @@
 ## Execution Checklist (비중첩)
 - [x] T1 @backend-dev  OTP 발급·검증·만료·잠금 (`src/main/java/com/datasense/auth/service/OtpService.java`)
 - [x] T2 @backend-dev  가입 + 멱등 (`src/main/java/com/datasense/auth/service/SignupService.java`)
-- [x] T3 @frontend-dev OTP 입력 화면 정합 (`sdd/04_verify/10_test/ui_parity/`)
+- [x] T3 @frontend-dev OTP 입력 화면 정합 + Thymeleaf 렌더 (`resources/templates/signup.html`, `SignupPageController`, `sdd/04_verify/10_test/ui_parity/`)
 - [x] T4 @test-dev     proof 게이트 + UI parity (`src/test/java/com/datasense/auth/` : OtpServiceTest·SignupFlowTest·RegressionTest·ContractParityTest)
 
 ## Regression Scope
@@ -21,3 +21,4 @@
 ## Validation
 - `./gradlew test` → JUnit 10/10 PASS (`tmp/proof-results.json`)
 - `./gradlew uiParity` → ui_parity 1/1
+- `./gradlew bootRun` → http://localhost:8080 에서 발급·인증번호 입력·가입 결과 3단계 확인 (`sdd/04_verify/02_screen/platform/signup.md`)
