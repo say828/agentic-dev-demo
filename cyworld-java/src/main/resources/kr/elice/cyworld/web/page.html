@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>도토리님의 미니홈피</title>
+<style>
+  body{margin:0;background:#bfe3f5;font-family:'맑은 고딕',sans-serif;color:#2a4257;
+       display:flex;justify-content:center;padding:22px 10px}
+  .hp{width:900px;max-width:97vw;background:#dcf0fb;border:2px solid #8fc6e6;border-radius:16px;
+      padding:14px;display:flex;gap:12px;box-shadow:0 10px 40px #0005}
+  .pane{background:#fff;border:1px solid #bfe0f0;border-radius:10px;padding:10px}
+  /* 좌측 프로필 칸 */
+  .left{width:248px;flex:none;display:flex;flex-direction:column;gap:10px}
+  .today-bar{background:#eaf6fd;border:1px solid #bfe0f0;border-radius:8px;padding:5px 8px;
+             font-size:11px;text-align:center;color:#3a6a86}
+  .today-bar b{color:#e0563c}
+  .portrait{text-align:center;padding:12px 10px 10px}
+  .portrait .frame{border:1px solid #d3e6f0;border-radius:8px;background:#f7fcff;padding:6px;display:inline-block}
+  .todayis{font-size:12px;color:#2f9fd0;font-weight:bold;margin:8px 0 0}
+  .owner-msg{color:#e3577f;font-size:12px;line-height:1.5;margin:6px 2px 0}
+  .history{font-size:11px;color:#5a7d92;line-height:1.7}
+  .history .t{color:#2f6f93;font-weight:bold}
+  .owner-sel{font-size:11px;color:#46708a}
+  .owner-sel select{font-size:11px;margin-top:3px;width:100%}
+  /* 메인 칸 */
+  .main{flex:1;display:flex;flex-direction:column;gap:10px}
+  .main-head{display:flex;justify-content:space-between;align-items:baseline;
+             border-bottom:2px solid #8fc6e6;padding-bottom:7px}
+  .main-head .nm{font-size:17px;font-weight:bold;color:#15557e}
+  .main-head .url{font-size:11px;color:#7fa6bd}
+  .menu-row{display:flex;flex-wrap:wrap;gap:5px}
+  .menu-row a{font-size:11px;color:#39698a;text-decoration:none;background:#eaf6fd;
+              border:1px solid #cfe6f2;border-radius:12px;padding:3px 9px}
+  .menu-row a.on{background:#2f7fb0;color:#fff;border-color:#2f7fb0;font-weight:bold}
+  .menu-row a b{color:#e0563c}
+  .roompane{display:flex;gap:12px;align-items:center}
+  .roompane .room{width:300px;flex:none;border-radius:10px;overflow:hidden;
+                  box-shadow:inset 0 0 0 3px #fff,0 1px 6px #0003;border:1px solid #c9a;background:#fdeede}
+  .roompane .room svg{display:block;width:100%;height:auto}
+  .mini{animation:bob 2.6s ease-in-out infinite;transform-origin:center}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .roomside{font-size:12px;color:#46708a;line-height:1.8}
+  .roomside .lk{color:#2f7fb0}
+  .mininame{font-size:11px;color:#88600f;font-weight:bold}
+  /* 본문 카드 */
+  section.card{border:1px solid #cfe6f2;border-radius:8px;padding:9px 10px;background:#f9fdff}
+  section.card h2{font-size:13px;margin:0 0 7px;color:#15557e}
+  input,button{font-size:12px;padding:3px 6px;margin:2px}
+  button{background:#2f7fb0;color:#fff;border:0;border-radius:4px;cursor:pointer}
+  ul{margin:6px 0;padding-left:18px;font-size:12px}
+  .msg{font-size:11px;color:#c33;min-height:14px}
+  .secret{color:#a6a}
+  .bgm{font-size:11px;color:#8a7a9a}
+
+  /* v4: 우측 메뉴 그리드 */
+  .header2{display:flex;gap:12px;align-items:flex-start;margin:2px 0}
+  .todaystory{flex:1;font-size:11px;color:#5a7d92;line-height:1.8}
+  .todaystory .t{color:#2f9fd0;font-weight:bold;font-size:12px}
+  .menucard{width:312px;flex:none;border:1px solid #cfe6f2;border-radius:8px;background:#f4fbff;padding:6px 9px}
+  .menucard .bgm-h{font-size:11px;color:#2f7fb0;font-weight:bold;border-bottom:1px solid #d6e9f3;
+                   padding-bottom:3px;margin-bottom:4px}
+  .menugrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .menugrid a{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#2f6f93;
+              text-decoration:none;padding:3px 0;border-bottom:1px dotted #dcebf3;cursor:pointer}
+  .menugrid .cnt{color:#e0563c;font-size:10px}
+  .menugrid .nb{background:#f3a03a;color:#fff;font-size:9px;border-radius:3px;padding:0 3px;margin-left:3px}
+
+  /* v5: 가장 오른쪽 세로 탭 레일 */
+  .hp{align-items:flex-start}
+  .tabrail{width:50px;flex:none;display:flex;flex-direction:column;gap:5px;padding-top:44px;margin-left:-2px}
+  .tabrail a{font-size:11px;color:#fff;background:#5aa6d6;border:1px solid #4a90c0;border-right:none;
+             border-radius:8px 0 0 8px;padding:7px 0;text-align:center;text-decoration:none;cursor:pointer;
+             box-shadow:-1px 1px 2px #0001}
+  .tabrail a.on{background:#fff;color:#15557e;font-weight:bold;border-color:#8fc6e6}
+</style></head>
+<body>
+  <div class="hp">
+    <!-- 좌측: 프로필 칸 -->
+    <div class="left">
+      <div class="today-bar">TODAY <b id="today">-</b> · TOTAL <b id="total">-</b></div>
+      <div class="pane portrait">
+        <div class="frame"><svg width="120" height="128" viewBox="0 0 120 128" aria-label="미니미 얼굴">
+  <rect x="54" y="8" width="11" height="16" rx="5" fill="#7a5230"/>
+  <path d="M16 52 Q60 12 104 52 Q60 68 16 52 Z" fill="#9c6b3f"/>
+  <path d="M16 52 Q60 68 104 52 Q82 62 60 62 Q38 62 16 52 Z" fill="#84592f"/>
+  <ellipse cx="60" cy="88" rx="44" ry="44" fill="#edcb95"/>
+  <ellipse cx="60" cy="88" rx="44" ry="44" fill="none" stroke="#d8b277" stroke-width="2"/>
+  <circle cx="46" cy="86" r="5.5" fill="#3a2a1a"/><circle cx="74" cy="86" r="5.5" fill="#3a2a1a"/>
+  <circle cx="48" cy="84" r="1.8" fill="#fff"/><circle cx="76" cy="84" r="1.8" fill="#fff"/>
+  <circle cx="37" cy="98" r="7" fill="#f6a0b4" opacity="0.75"/>
+  <circle cx="83" cy="98" r="7" fill="#f6a0b4" opacity="0.75"/>
+  <path d="M50 99 Q60 107 70 99" stroke="#3a2a1a" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+</svg></div>
+        <div class="todayis" id="moodtxt">오늘의 기분: 🌧️</div>
+        <div class="owner-msg">싸이 5th 생일 축하해요!!!<br>모두 놀러와 주실꺼죠?♪</div>
+      </div>
+      <div class="pane history">
+        <div>▶ HISTORY</div>
+        <div><span class="t">미니홈피</span> 2026. 6. 9 (＋)</div>
+        <div class="bgm" id="bgm">♪ BGM: 첫눈</div>
+      </div>
+      <div class="pane owner-sel">
+        홈주인 <b>도토리</b>
+        <select><option>★ 나의 일촌</option></select>
+        <div id="ilchons" style="margin-top:5px;color:#39698a"></div>
+      </div>
+    </div>
+    <!-- 메인 칸 -->
+    <div class="main">
+      <div class="main-head">
+        <div class="nm" id="title">도토리님의 미니홈피</div>
+        <div class="url">http://www.cyworld.com/dotori</div>
+      </div>
+
+      <div class="header2">
+        <div class="todaystory">
+          <div class="t">TODAY STORY</div>
+          Updated news<br>
+          · 미니룸을 새로 꾸몄어요<br>
+          · 일촌 신청 1건이 왔어요<br>
+          · 방명록에 새 글이 있어요
+        </div>
+        <div class="menucard">
+          <div class="bgm-h">🔊 BGM ▶ 첫눈</div>
+          <div class="menugrid">
+            <a>다이어리<span class="cnt">0/1</span></a>
+            <a>쥬크박스<span class="cnt">0/0</span></a>
+            <a>사진첩<span class="cnt">1396/1367<span class="nb">N</span></span></a>
+            <a>갤러리<span class="cnt">0/0</span></a>
+            <a>게시판<span class="cnt">1019/998<span class="nb">N</span></span></a>
+            <a>방명록<span class="cnt">11101<span class="nb">N</span></span></a>
+          </div>
+        </div>
+      </div>
+      <div class="pane roompane">
+        <div class="room">
+      <svg width="200" height="190" viewBox="0 0 200 190" aria-label="도토리네 미니룸">
+        <!-- 벽지 / 바닥 (벽지는 구매 아이템으로 바뀜: id=wall) -->
+        <rect id="wall" x="0" y="0" width="200" height="124" fill="#fdeede"/>
+        <rect x="0" y="124" width="200" height="66" fill="#e6c590"/>
+        <line x1="0" y1="124" x2="200" y2="124" stroke="#d3ad73" stroke-width="2"/>
+        <line x1="0" y1="150" x2="200" y2="150" stroke="#d9b67e" stroke-width="1.4"/>
+        <line x1="0" y1="173" x2="200" y2="173" stroke="#d9b67e" stroke-width="1.4"/>
+        <!-- 창문 (하늘색·날씨는 기분으로 바뀜: id=sky, id=weather) -->
+        <rect id="sky" x="24" y="18" width="58" height="48" rx="4" fill="#9fb4c8" stroke="#fff" stroke-width="4"/>
+        <g id="weather"></g>
+        <line x1="53" y1="18" x2="53" y2="66" stroke="#fff" stroke-width="3"/>
+        <line x1="24" y1="42" x2="82" y2="42" stroke="#fff" stroke-width="3"/>
+        <!-- 벽시계 -->
+        <circle cx="110" cy="32" r="11" fill="#fff" stroke="#cbb" stroke-width="2"/>
+        <line x1="110" y1="32" x2="110" y2="25" stroke="#766" stroke-width="2"/>
+        <line x1="110" y1="32" x2="115" y2="34" stroke="#766" stroke-width="2"/>
+        <!-- 하트 액자 -->
+        <rect x="134" y="22" width="34" height="30" rx="3" fill="#fff" stroke="#caa"/>
+        <path d="M151 31 q-5 -6 -9 0 q-3 5 9 12 q12 -7 9 -12 q-4 -6 -9 0 z" fill="#f48aa0"/>
+        <!-- 러그 -->
+        <ellipse cx="100" cy="160" rx="64" ry="18" fill="#f7c9d6"/>
+        <ellipse cx="100" cy="160" rx="50" ry="13" fill="#fcdfe8"/>
+        <!-- 소파 -->
+        <rect x="6" y="118" width="46" height="28" rx="9" fill="#9fc4e8"/>
+        <rect x="6" y="110" width="46" height="16" rx="8" fill="#b6d4f0"/>
+        <!-- 화분 -->
+        <rect x="168" y="126" width="22" height="22" rx="3" fill="#c98a5a"/>
+        <path d="M179 126 q-12 -20 -2 -32 q6 12 2 32 z" fill="#5bb56a"/>
+        <path d="M179 126 q12 -18 4 -30 q-2 14 -4 30 z" fill="#6cc97b"/>
+        <path d="M179 126 q-2 -24 0 -32 q4 16 0 32 z" fill="#52a860"/>
+        <!-- 일촌 미니미(수락 시 JS가 채움) -->
+        <g id="friends"></g>
+        <!-- 미니미 발 그림자 -->
+        <ellipse cx="100" cy="164" rx="24" ry="5.5" fill="#000" opacity="0.10"/>
+        <!-- 말풍선 -->
+        <g>
+          <rect x="104" y="60" width="78" height="26" rx="13" fill="#fff" stroke="#d9c4a0"/>
+          <path d="M120 86 l-7 11 l15 -7 z" fill="#fff" stroke="#d9c4a0"/>
+          <path d="M120 86 l-7 11 l15 -7" fill="#fff" stroke="#fff"/>
+          <text x="143" y="77" font-size="12" text-anchor="middle" fill="#86631a">방가방가~ 🌰</text>
+        </g>
+        <!-- 미니미(도토리) -->
+        <g transform="translate(56,62) scale(0.78)"><g class="mini">
+          <rect x="50" y="14" width="10" height="16" rx="5" fill="#7a5230"/>
+          <path d="M22 56 Q55 18 88 56 Q55 70 22 56 Z" fill="#9c6b3f"/>
+          <path d="M22 56 Q55 70 88 56 Q72 64 55 64 Q38 64 22 56 Z" fill="#84592f"/>
+          <ellipse cx="55" cy="86" rx="34" ry="36" fill="#edcb95"/>
+          <ellipse cx="55" cy="86" rx="34" ry="36" fill="none" stroke="#d8b277" stroke-width="2"/>
+          <circle cx="43" cy="84" r="4.6" fill="#3a2a1a"/>
+          <circle cx="67" cy="84" r="4.6" fill="#3a2a1a"/>
+          <circle cx="44.6" cy="82.4" r="1.5" fill="#fff"/>
+          <circle cx="68.6" cy="82.4" r="1.5" fill="#fff"/>
+          <circle cx="36" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
+          <circle cx="74" cy="95" r="6" fill="#f6a0b4" opacity="0.75"/>
+          <path id="mouth" d="M48 101 Q55 95 62 101" stroke="#3a2a1a" stroke-width="2.4"
+                fill="none" stroke-linecap="round"/>
+        </g></g>
+      </svg>
+    </div>
+        <div class="roomside">
+          <div class="mininame">Mini Room</div>
+          <div>도토리네 미니룸이에요.</div>
+          <div class="lk">미니룸 · 일촌평 · 방명록</div>
+          <div>🌰 도토리 <b id="bal">-</b></div>
+        </div>
+      </div>
+
+      <section class="card"><h2>🌰 도토리</h2>
+        <input id="amt" type="number" value="100" style="width:64px"><button onclick="charge()">충전</button>
+        <input id="item" value="미니룸스킨" style="width:84px">
+        <input id="price" type="number" value="120" style="width:54px"><button onclick="buy()">구매</button>
+        <div class="msg" id="dmsg"></div></section>
+
+      <section class="card"><h2>🎀 방 꾸미기 상점 <small style="font-weight:normal;color:#789">(사면 방이 바뀜)</small></h2>
+        <button onclick="shop('벽지:하늘',80)">벽지:하늘 (80)</button>
+        <button onclick="shop('벽지:노을',80)">벽지:노을 (80)</button>
+        <button onclick="shop('벽지:벚꽃',80)">벽지:벚꽃 (80)</button>
+        <button onclick="shop('BGM:벚꽃엔딩',50)">BGM:벚꽃엔딩 (50)</button>
+        <div class="msg" id="smsg"></div>
+        <div style="font-size:11px;color:#777">보유: <span id="owned">-</span></div></section>
+
+      <section class="card"><h2>👫 일촌 <small style="font-weight:normal;color:#789">(수락하면 방에 친구 등장)</small></h2>
+        <input id="who" value="친구C" style="width:74px"><button onclick="ilreq()">신청</button>
+        <button onclick="ilacc()">친구B 수락</button>
+        <div class="msg" id="imsg"></div></section>
+
+      <section class="card"><h2>🌤️ 오늘의 기분 <small style="font-weight:normal;color:#789">(창문 날씨 + 표정)</small></h2>
+        <button onclick="setMood('맑음')">☀️ 맑음</button>
+        <button onclick="setMood('흐림')">☁️ 흐림</button>
+        <button onclick="setMood('비')">🌧️ 비</button>
+        <button onclick="setMood('행복')">😊 행복</button></section>
+
+      <section class="card"><h2>📖 방명록 <small style="font-weight:normal;color:#789">What friends say ♥</small></h2>
+        <input id="gauthor" value="방문자" style="width:64px">
+        <input id="gmsg" value="다녀가요~" style="width:120px">
+        <label style="font-size:11px"><input id="gsecret" type="checkbox">비밀</label>
+        <button onclick="sign()">남기기</button>
+        <ul id="gb"></ul></section>
+    </div>
+    <div class="tabrail">
+      <a class="on">홈</a><a>프로필</a><a>다이어리</a><a>쥬크박스</a><a>미니룸</a>
+      <a>사진첩</a><a>갤러리</a><a>게시판</a><a>방명록</a>
+    </div>
+  </div>
+<script>
+async function api(path, body){
+  const r = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)});
+  return r.json();
+}
+function friendSVG(name, i){
+  const caps = ['#b46b8f','#6f9bd1','#cda14a','#7bbf8a'];
+  const x = 116 + i*24, y = 122, cap = caps[i % caps.length];
+  return '<g transform="translate('+x+','+y+') scale(0.40)"><title>'+name+'</title>'
+    + '<ellipse cx="55" cy="124" rx="30" ry="7" fill="#000" opacity="0.10"/>'
+    + '<path d="M22 56 Q55 18 88 56 Q55 70 22 56 Z" fill="'+cap+'"/>'
+    + '<ellipse cx="55" cy="86" rx="34" ry="36" fill="#edcb95" stroke="#d8b277" stroke-width="2"/>'
+    + '<circle cx="45" cy="86" r="4" fill="#3a2a1a"/><circle cx="65" cy="86" r="4" fill="#3a2a1a"/>'
+    + '<circle cx="38" cy="95" r="5" fill="#f6a0b4" opacity="0.7"/>'
+    + '<circle cx="72" cy="95" r="5" fill="#f6a0b4" opacity="0.7"/>'
+    + '<path d="M48 97 Q55 103 62 97" stroke="#3a2a1a" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>';
+}
+const WEATHER = {
+  sun:'<circle cx="66" cy="29" r="7" fill="#ffd34d"/>'
+    +'<g stroke="#ffd34d" stroke-width="2"><line x1="66" y1="17" x2="66" y2="21"/>'
+    +'<line x1="66" y1="37" x2="66" y2="41"/><line x1="54" y1="29" x2="58" y2="29"/>'
+    +'<line x1="74" y1="29" x2="78" y2="29"/></g>',
+  cloud:'<ellipse cx="64" cy="34" rx="13" ry="7" fill="#fff"/><ellipse cx="53" cy="36" rx="8" ry="6" fill="#fff"/>',
+  rain:'<ellipse cx="64" cy="30" rx="13" ry="7" fill="#fff"/><ellipse cx="53" cy="32" rx="8" ry="6" fill="#fff"/>'
+    +'<g stroke="#7fa6c4" stroke-width="2"><line x1="54" y1="42" x2="52" y2="48"/>'
+    +'<line x1="62" y1="42" x2="60" y2="48"/><line x1="70" y1="42" x2="68" y2="48"/></g>'
+};
+const MOUTH = {smile:'M48 96 Q55 103 62 96', neutral:'M48 99 L62 99', sad:'M48 101 Q55 95 62 101'};
+function applyMood(m){
+  document.getElementById('sky').setAttribute('fill', m.sky);
+  document.getElementById('weather').innerHTML = WEATHER[m.weather] || '';
+  document.getElementById('mouth').setAttribute('d', MOUTH[m.face] || MOUTH.neutral);
+  document.getElementById('moodtxt').textContent = '오늘의 기분: ' + m.emoji;
+}
+async function setMood(name){ await api('/api/mood',{mood:name}); refresh(); }
+async function refresh(){
+  const s = await (await fetch('/api/state')).json();
+  applyMood(s.mood);
+  title.textContent = s.owner + '님의 미니홈피';
+  today.textContent = s.today; total.textContent = s.total; bal.textContent = s.balance;
+  ilchons.textContent = '일촌(' + s.ilchons.length + '): ' + (s.ilchons.join(', ') || '아직 없음');
+  gb.innerHTML = s.guestbook.map(e =>
+    '<li'+(e.secret?' class="secret"':'')+'><b>'+e.author+'</b>: '+e.msg+(e.secret?' 🔒':'')+'</li>').join('');
+  // 방 꾸미기 반영: 벽지·BGM·보유·일촌 미니미
+  document.getElementById('wall').setAttribute('fill', s.room.wallpaper);
+  document.getElementById('bgm').textContent = '♪ BGM: ' + s.room.bgm;
+  document.getElementById('owned').textContent = s.room.owned.join(', ') || '없음';
+  document.getElementById('friends').innerHTML = s.ilchons.slice(0,4).map(friendSVG).join('');
+}
+async function shop(item, price){
+  const r = await api('/api/purchase',{user:'도토리',item:item,price:price});
+  smsg.textContent = r.error ? ('구매 실패: '+r.error) : (item+' 적용! 잔액 '+r.balance);
+  refresh();
+}
+async function charge(){ await api('/api/charge',{user:'도토리',amount:+amt.value}); dmsg.textContent=''; refresh(); }
+async function buy(){ const r=await api('/api/purchase',{user:'도토리',item:item.value,price:+price.value});
+  dmsg.textContent = r.error ? ('구매 실패: '+r.error) : ('구매 완료 · 잔액 '+r.balance); refresh(); }
+async function ilreq(){ await api('/api/ilchon_request',{frm:'도토리',to:who.value}); imsg.textContent='신청 보냄: '+who.value; refresh(); }
+async function ilacc(){ const r=await api('/api/ilchon_accept',{frm:'친구B',to:'도토리'});
+  imsg.textContent = r.status==='accepted' ? '친구B 와 일촌!' : '수락할 신청 없음'; refresh(); }
+async function sign(){ await api('/api/guestbook',{owner:'도토리',author:gauthor.value,msg:gmsg.value,secret:gsecret.checked}); refresh(); }
+refresh();
+</script>
+</body></html>
